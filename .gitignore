@@ -1,3 +1,4 @@
 .idea/
+*.iml
 coffee/*.map
 coffee/*.js
