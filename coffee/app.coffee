@@ -18,20 +18,20 @@ cors = (req, res, next) ->
 
 #======================================================
 
-service = (req, res) ->
+service = (req, res, next) ->
     res.setHeader "Content-Type", "application/json; charset=UTF-8"
     u = url.parse(req.url)
     switch u.pathname
         when "/find"
-            queryFind req, res
+            queryFind req, res, next
         else
             res.end "{\"result\":\"Unknown script: " + u.pathname + "\"}"
 
 #======================================================
 
-queryFind = (req, res) ->
+queryFind = (req, res, next) ->
 
-    console.log req.body.f2
+    console.log req.body.fields.f2
 
     connection = mysql.createConnection(
         host: "memorial04.cloudapp.net"
@@ -42,7 +42,11 @@ queryFind = (req, res) ->
 
     connection.connect (err) ->
         connection.query makeSql(req.body), (error, rows, b) ->
-            throw error    if error
+            if error
+                connection.end()
+                res.end()
+                return
+            
             connection.end()
             
             out = {}
@@ -60,11 +64,11 @@ queryFind = (req, res) ->
 
 makeSql = ( json ) ->
     q = ''
-    for fname,fvalue of json
+    for fname,fvalue of json.fields
         q += "@"+fname+" "+fvalue+" "
-    console.log "SELECT id FROM image2mem WHERE match('"+q+"');"
-    return "SELECT id FROM image2mem WHERE match('"+q+"');"
-    #return "SELECT id FROM image2mem WHERE match('@f2 Тумаркин');"
+    sql = "SELECT id FROM "+json.index+" WHERE match('"+q+"');"
+    console.log sql
+    return sql
 
 #======================================================
 

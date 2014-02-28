@@ -1,0 +1,94 @@
+﻿<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style>
+
+div.cell {
+    float:left;
+    width:300px;
+    margin:30px;
+}
+
+div.cell textarea {
+    width:100%;
+    height:200px;
+}
+
+div.cell button {
+    width:100%;
+}
+
+</style>
+
+
+<div class='cell'>
+<b>find</b><br>
+<textarea id='ta_json_find'>
+{ "index":"image2mem", "start":"0", "count":"50", "fields":{"f2":"Петров"} }
+</textarea>
+<br>
+<button onclick=runQuery('find')>Run</button>
+</div>
+
+<div class='cell'>
+<b>add</b><br>
+<textarea id='ta_json_add' cols='50' rows='10'>
+{ "f2":"Тумаркин", "f3":"Иосиф" }
+</textarea>
+<br>
+<button onclick=runQuery('add')>Run</button>
+</div>
+
+<script src="jquery-1.11.0.min.js"></script>
+
+<script>
+
+//$( "#jsonArea" ).text('ecd');
+
+function runQuery( operation ) {
+    var v = $( "#ta_json_"+operation ).val();
+    
+    //alert(v)
+    
+    $.ajax( {
+        dataType: "json",
+        crossDomain: true,
+        contentType: 'application/json; charset=UTF-8',
+//        url: "http://memorial04.cloudapp.net/find",
+        url: "http://localhost:81/"+operation,
+        type: "post",
+        data: v,
+        success: function(data, textStatus, jqXHR) { 
+            //alert('success'); 
+            console.log(data)
+            //alert(data.entity1);
+        },
+        error: function(jqXHR, textStatus, errorThrown) { alert('error: '+jqXHR);console.log(jqXHR) }
+    } )
+    
+}
+
+//=======================================
+
+$( "#btnGo" ).click( function(event){
+    var v = $( "#jsonArea" ).val();
+    
+    
+//    v = { 'entity':123 }
+//    alert( v );
+    $.ajax( {
+        dataType: "json",
+        crossDomain: true,
+        contentType: 'application/json; charset=UTF-8',
+//        url: "http://memorial04.cloudapp.net/find",
+        url: "http://localhost:81/find",
+        type: "post",
+        data: v,
+        success: function(data, textStatus, jqXHR) { 
+            //alert('success'); 
+            console.log(data)
+            //alert(data.entity1);
+        },
+        error: function(jqXHR, textStatus, errorThrown) { alert('error: '+jqXHR);console.log(jqXHR) }
+    } )
+});
+
+</script>
